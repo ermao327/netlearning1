@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.PraiseDao">
+
+    <resultMap id="praise1" type="com.entity.Praise">
+        <id column="id" property="id"></id>
+        <result column="user_id" property="user.id"></result>
+        <result column="comment_id" property="comment.id"></result>
+        <result column="create_date" property="create_date"></result>
+    </resultMap>
+    <select id="selectPraise" resultMap="praise1">
+        select a.id,a.user_id,a.comment_id,a.create_date
+        from t_praise a,t_comment b,t_user c
+        where a.user_id=c.id
+        and a.comment_id=b.id
+        and a.user_id=#{uid}
+        and a.comment_id=#{commentId}
+    </select>
+
+    <insert id="insertPraise" >
+        insert into t_praise (user_id,comment_id,create_date)
+        values (#{uid},#{commentId},#{createDate})
+    </insert>
+
+    <delete id="deletePraise">
+        delete  from t_praise
+        where user_id=#{uid}
+        and comment_id=#{commentId}
+    </delete>
+</mapper>

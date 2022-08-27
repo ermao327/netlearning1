@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ResourceDao">
+    <select id="selectResourceByResourceId" resultType="com.entity.Resource">
+        select * from t_resource where id = #{resourceId}
+    </select>
+
+    <select id="selectUserByNameAndPass" resultType="com.entity.User">
+        select * from t_user where login_name=#{userName} and password=#{passWord}
+    </select>
+
+    <select id="selectGoldPointsByUserId" resultType="com.entity.GoldPoints">
+        select * from t_gold_points where user_id=#{id}
+    </select>
+
+    <update id="updatePointOrGold">
+        update t_gold_points
+        <set>
+            <if test="point!=null">
+            point_count=#{point},
+            </if>
+        </set>
+        <set>
+            <if test="gold!=null">
+            gold_count=#{gold},
+            </if>
+        </set>
+        where user_id=#{id}
+    </update>
+</mapper>

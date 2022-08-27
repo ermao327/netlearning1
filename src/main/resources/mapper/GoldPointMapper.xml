@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.GoldPointDao">
+<select id="selectLastLoginDate" resultType="java.util.Date">
+        select create_date from t_gold_points  where info = "签到获得5积分" and user_id = #{user_id} order by create_date desc limit 1
+    </select>
+
+<insert id="insertGP" >
+        insert  into t_gold_points (user_id,point_count,gold_count,info,create_date)values(#{user_id},#{point_count},#{gold_count},#{info},#{create_date})
+    </insert>
+</mapper>

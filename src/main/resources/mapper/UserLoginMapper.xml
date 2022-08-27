@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserLoginDao">
+    <select id="findUserByLogin_name" resultType="com.entity.User">
+        select * from t_user <where>
+        <if test="login_name!=null">
+            and login_name = #{login_name}
+        </if>
+        <if test="password!=null">
+            and password = #{password}
+        </if>
+    </where>
+    </select>
+    <select id="findAllUsers" resultType="com.entity.User">
+        select * from t_user <where>
+        <if test="login_name!=''">
+            and login_name = #{login_name}
+        </if>
+        <if test="nickname!=''">
+            and nickname = #{nickname}
+        </if>
+        <if test="email!=''">
+            and email = #{email}
+        </if>
+        <if test="role!='-1'">
+            and role = #{role}
+        </if>
+        <if test="create_start_date!=''">
+            and create_date &gt;= str_to_date(#{create_start_date},'%Y-%m-%d')
+        </if>
+        <if test="create_end_date!=''">
+            and create_date  &lt;=  str_to_date(#{create_end_date},'%Y-%m-%d')
+        </if>
+        <if test="login_start_date!=''">
+            and login_date &gt;= str_to_date(#{login_start_date},'%Y-%m-%d')
+        </if>
+        <if test="login_end_date!=''">
+            and login_date  &lt;=  str_to_date(#{login_end_date},'%Y-%m-%d')
+        </if>
+    </where>
+    </select>
+    <select id="findUserByid" resultType="com.entity.User">
+    select * from t_user where id=#{id}
+    </select>
+    <select id="findUsernameByid" resultType="String">
+        select login_name from t_user where id=#{id}
+    </select>
+    <update id="updateUserInfoByid">
+        update t_user <set>
+        <if test="nickname!=null">
+            nickname=#{nickname},
+        </if>
+         <if test="password!=null">
+             password=#{password},
+         </if>
+        <if test="role!=null">
+            role=#{role},
+        </if>
+        <if test="email!=null">
+            email=#{email},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+    </set>
+        where id=#{id}
+    </update>
+    <select id="findUseridByUserName" resultType="Integer">
+        select id from t_user where login_name=#{name}
+    </select>
+</mapper>

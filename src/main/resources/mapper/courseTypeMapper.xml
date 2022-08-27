@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.CourseTypeDao">
+    <resultMap id="ct" type="com.entity.CourseType">
+        <id property="id" column="id"/>
+        <result property="type_name" column="type_name"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="status" column="status"/>
+        <collection property="childrens" ofType="com.entity.CourseType"
+                    select="com.dao.CourseTypeDao.selectByParentId" column="id">
+        </collection>
+    </resultMap>
+
+
+    <select id="selectAll" resultMap="ct">
+        select * from t_course_type where parent_id is null
+    </select>
+    <select id="selectByParentId" resultMap="ct">
+        select * from t_course_type where parent_id = #{id}
+    </select>
+    <select id="selectParentIdById" resultType="int">
+        select parent_id from t_course_type where id = #{id}
+    </select>
+    <select id="selectById" resultType="com.entity.CourseType">
+        select * from t_course_type where id = #{id}
+    </select>
+
+    <select id="selectCourseType" resultType="com.entity.CourseType">
+        select * from t_course_type
+    </select>
+    <select resultType="com.entity.CourseType" id="findByParentId">
+select * from t_course_type where status = 0 and parent_id = #{parent_id}
+</select>
+
+    <select resultType="com.entity.CourseType" id="selectCourseTypeById">
+select * from t_course_type where id= #{id}
+</select>
+</mapper>

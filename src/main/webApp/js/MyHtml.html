@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyHtml.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+  </head>
+  
+  <body>
+    <script type="text/javascript" src="template-web.js" ></script>
+	<!--定义模板-->
+	<script type="text/html" id="pt">
+		<ul>
+    		<li>姓名{{name}}</li>
+    		<li>性别{{sex}}</li>
+    		<li>年龄{{age}}</li>
+		</ul>
+	</script>
+	<script type="text/javascript">
+	    //定义数据
+	    var d = { 
+	    	name:"刘强",
+	        sex:"男",
+	        age:23
+	    };
+	
+	   var result = template("pt",d);
+	    //将返回的模板结果添加到界面中
+	    document.body.innerHTML = result;
+	</script>
+  </body>
+</html>

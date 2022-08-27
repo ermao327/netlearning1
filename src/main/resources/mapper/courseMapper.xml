@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.CourseDao">
+    <resultMap id="course" type="com.entity.Course">
+    <id column="id" property="id"/>
+    <result column="course_name" property="course_name"/>
+    <result column="author" property="author"/>
+    <result column="cover_image_url" property="cover_image_url"/>
+    <result column="click_number" property="click_number"/>
+    <result column="course_type_id" property="course_type_id"/>
+    <association property="courseType" javaType="com.entity.CourseType"
+                 select="com.dao.CourseTypeDao.selectById" column="course_type_id">
+    </association>
+</resultMap>
+    <select id="selectAllCourses" resultMap="course">
+        select * from t_course order by recommendation_grade desc ,click_number desc
+    </select>
+    <select id="selectByCourseName" resultType="com.entity.Course">
+        select * from t_course
+         where course_name like concat('%','${courseName}','%')
+         order by create_date desc
+    </select>
+    <select id="selectByCourseTypeId" resultType="com.entity.Course">
+        select * from t_course where course_type_id in (
+               select id from t_course_type where parent_id in (
+                       select id from t_course_type
+                              where parent_id = #{ctid})) order by create_date desc
+    </select>
+    <select id="selectByCourseTypeId2" resultType="com.entity.Course">
+        select * from t_course
+        <where>
+            <if test="course_type_id != null">
+                course_type_id = #{ctid}
+            </if>
+        </where>
+        order by create_date desc
+    </select>
+
+    <select id="selectCourseByCourseId" resultType="com.entity.Course">
+        select * from t_course
+        where course_type_id=(select course_type_id
+        from t_course where id=#{courseId})
+        order by click_number desc limit 0,3
+    </select>
+
+    <resultMap id="course1" type="com.entity.Course">
+        <id column="id" property="id"/>
+        <result column="course_name" property="course_name"/>
+        <result column="author" property="author"/>
+        <result column="click_number" property="click_number"/>
+        <result column="recommendation_grade" property="recommendation_grade"/>
+        <result column="type_name" property="courseType.type_name"/>
+        <result column="create_date" property="create_date"/>
+        <result column="cover_image_url" property="cover_image_url"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <select id="selectCourse" resultMap="course1">
+        select a.*,b.type_name from t_course a,t_course_type b
+        where a.course_type_id=b.id
+    </select>
+
+    <update id="updateCourseById">
+        update t_course set status=#{status} where id=#{id}
+    </update>
+
+    <insert id="insertCourseByCondition">
+        insert into t_course (course_name,author,cover_image_url,create_date,click_number,status,recommendation_grade,course_type_id)
+        values (#{course_name},#{author},#{cover_image_url},#{create_date},#{click_number},#{status},#{recommendation_grade},#{course_type_id})
+    </insert>
+
+    <select id="selectCourseById" resultType="com.entity.Course">
+        select * from t_course where id=#{id}
+    </select>
+
+    <update id="updateCourseByCondition">
+        update t_course set course_name=#{course_name},author=#{author},cover_image_url=#{cover_image_url},create_date=#{create_date},
+        click_number=#{click_number},status=#{status},recommendation_grade=#{recommendation_grade},course_type_id=#{course_type_id}
+        where id=#{id}
+    </update>
+    <select id="getCourseList" resultType="com.entity.Course">
+        select * from t_course
+    </select>
+    <select id="getChapterList" resultType="com.entity.Chapter">
+        select * from t_chapter where course_id =#{cid}
+    </select>
+    <select id="getCourseTypeList" resultType="com.entity.CourseType">
+     select * from t_course_type <where>
+        <if test="parent_id!=0">
+            parent_id=#{parent_id}
+        </if>
+    </where>
+    </select>
+    <select id="findCourseTypeById" resultType="com.entity.CourseType">
+        select * from t_course_type where id=#{id}
+    </select>
+    <update id="updateCourseTypeById">
+        update t_course_type <set>
+        <if test="type_name!=null">
+            type_name=#{type_name},
+        </if>
+        <if test="parent_id!=0">
+            parent_id=#{parent_id},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+    </set>
+    <where>
+        <if test="id!=null">
+            id=#{id}
+        </if>
+    </where>
+    </update>
+    <insert id="insertCourseType">
+    insert into t_course_type  <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="type_name!=null"> type_name ,</if>
+        <if test="parent_id!=0"> parent_id ,</if>
+        <if test="status!=null"> status ,</if>
+    </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type_name!=null"> #{type_name}, </if>
+            <if test="parent_id!=0"> #{parent_id}, </if>
+            <if test="status!=null"> #{status}, </if>
+        </trim>
+    </insert>
+    <select id="findTop15" resultMap="course1">
+    select c.id cid,c.course_name,c.author,c.cover_image_url,c.click_number,c.recommendation_grade,ct.id,ct.type_name from t_course c,t_course_type ct where c.course_type_id=ct.id order by c.click_number desc limit 15
+    </select>
+</mapper>

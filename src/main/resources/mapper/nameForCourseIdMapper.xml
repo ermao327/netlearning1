@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.NameForCourseIdDao">
+    <select id="selectCourseIdByCourseName" resultType="com.entity.Course">
+        select * from t_course where course_name=#{courseName}
+    </select>
+
+
+    <resultMap id="chapter1" type="com.entity.Chapter">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="info" property="info"></result>
+        <result column="create_date" property="create_date"></result>
+        <result column="status" property="status"></result>
+        <association property="resource" javaType="com.entity.Resource">
+            <id column="id" property="id"></id>
+            <result column="title" property="title"></result>
+        </association>
+    </resultMap>
+
+    <select id="selectChapterByCourseId" resultType="com.entity.Chapter">
+        select * from t_chapter where course_id=#{courseId}
+    </select>
+
+    <select id="selectResource" resultType="com.entity.Resource">
+        select * from t_resource where chapter_id in(select id from t_chapter where course_id=#{courseId})
+    </select>
+</mapper>

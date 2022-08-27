@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserResouceDao">
+<!--    查询数据库所有的资源-->
+    <resultMap id="map1" type="com.vo.ResourceVo">
+        <association property="user_name"
+                     select="com.dao.UserLoginDao.findUsernameByid"
+                     column="user_id">
+        </association>
+    </resultMap>
+    <select id="findResource" resultMap="map1">
+        select * from t_resource <where>
+        <if test="title!=null&amp;title!=''">
+            and  title=#{title}
+        </if>
+        <if test="create_start_date!=null">
+           and create_date &gt;= #{create_start_date}
+        </if>
+        <if test="create_end_date!=null">
+            and create_date  &lt;= #{create_end_date}
+        </if>
+        <if test="user_id!=null">
+           and user_id=#{user_id}
+        </if>
+        <if test="status!=null&amp;status!=-1">
+           and status=#{status}
+        </if>
+        <if test="file_type!=null&amp;file_type!='-1'">
+           and file_type=#{file_type}
+        </if>
+    </where>
+         order by id desc
+    </select>
+<!--    插入资源-->
+<insert id="insertResource">
+    insert into t_resource (title,path,original_name,file_size,file_type,click_count,create_date,cost_type,cost_number,user_id,chapter_id,status) values (
+    #{title},#{path},#{original_name},#{file_size},#{file_type},0,#{create_date},#{cost_type},#{cost_number},#{user_id},#{chapter_id},1
+    )
+</insert>
+<!--    通过标题字段分段查询是否存在相应数据-->
+    <select id="findResourceByTitle" resultType="Integer">
+        select count(title) from t_resource where title=#{title}
+    </select>
+<!--    通过前端传进的资源对象修改相应字段-->
+    <update id="updateResourceById">
+        update t_resource <set>
+        <if test="title!=null">
+           title=#{title},
+        </if>
+        <if test="path!=null">
+            path=#{path},
+        </if>
+        <if test="original_name!=null">
+            original_name=#{original_name},
+        </if>
+        <if test="file_size!=null">
+            file_size=#{file_size},
+        </if>
+        <if test="file_type!=null">
+            file_type=#{file_type},
+        </if>
+        <if test="create_date!=null">
+            create_date=#{create_date},
+        </if>
+        <if test="cost_type!=null">
+            cost_type=#{cost_type},
+        </if>
+        <if test="cost_number!=null">
+            cost_number=#{cost_number},
+        </if>
+        <if test="chapter_id!=null">
+            chapter_id=#{chapter_id},
+        </if>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+    </set>
+    where
+    id=#{id}
+        </update>
+<!--    通过ID删除相应的数据-->
+    <delete id="deleteResourceById">
+        delete from t_resource where id =#{id}
+    </delete>
+<!--    修改资源的状态-->
+    <update id="updateResourceStatus">
+        update t_resource <set>
+        <if test="status!=null">
+            status=#{status},
+        </if>
+    </set>
+    where id=#{id}
+    </update>
+    <select id="findById" resultType="com.entity.Resource">
+        select * from t_resource where id=#{id}
+    </select>
+</mapper>

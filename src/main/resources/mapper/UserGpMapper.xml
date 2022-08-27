@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserGpDao">
+
+<select id="findRecord" resultType="com.entity.GoldPoints">
+    select * from t_gold_points <where>
+    <if test="id!=null">
+        and user_id = #{id}
+    </if>
+    order by id desc
+</where>
+</select>
+
+<insert id="addGoldById">
+        insert into t_gold_points (user_id,point_count,gold_count,info,create_date) values (#{user_id},#{point_count},#{gold_count},#{info},#{create_date})
+    </insert>
+<select id="getGoldPointsVo" resultType="com.vo.GoldPointsVo">
+        select user_id,sum(point_count) as sum_point_count,sum(gold_count) as sum_gold_count from t_gold_points where user_id=#{id}
+    </select>
+
+</mapper>
